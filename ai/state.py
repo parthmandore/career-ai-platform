@@ -6,3 +6,4 @@ class CareerState(TypedDict):
     strengths: list
     missing_skills: list
     roadmap: str
+    career_advice: str
