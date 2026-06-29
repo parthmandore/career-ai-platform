@@ -1,36 +1,78 @@
+"""
+LangGraph Workflow
+
+Resume
+   │
+   ▼
+Resume Analyzer
+   │
+   ▼
+Skill Gap Analyzer
+   │
+   ▼
+Career Advisor
+   │
+   ▼
+Roadmap Generator
+"""
+
+from langgraph.graph import END
 from langgraph.graph import StateGraph
 
-from state import CareerState
+from ai.state import CareerState
 
-from nodes.resume_analyzer import analyze_resume
-from nodes.skill_gap_analyzer import analyze_skill_gap
-from nodes.roadmap_generator import generate_roadmap
+from ai.nodes.resume_analyzer import resume_analyzer
+from ai.nodes.skill_gap_analyzer import skill_gap_analyzer
+from ai.nodes.career_advisor import career_advisor
+from ai.nodes.roadmap_generator import roadmap_generator
 
-workflow = StateGraph(CareerState)
 
-workflow.add_node(
-    "resume_analyzer",
-    analyze_resume
-)
+def build_graph():
 
-workflow.add_node(
-    "skill_gap_analyzer",
-    analyze_skill_gap
-)
+    workflow = StateGraph(CareerState)
 
-workflow.add_node(
-    "roadmap_generator",
-    generate_roadmap
-)
+    workflow.add_node(
+        "resume_analyzer",
+        resume_analyzer,
+    )
 
-workflow.add_edge(
-    "resume_analyzer",
-    "skill_gap_analyzer"
-)
+    workflow.add_node(
+        "skill_gap_analyzer",
+        skill_gap_analyzer,
+    )
 
-workflow.add_edge(
-    "skill_gap_analyzer",
-    "roadmap_generator"
-)
+    workflow.add_node(
+        "career_advisor",
+        career_advisor,
+    )
 
-graph = workflow.compile()
+    workflow.add_node(
+        "roadmap_generator",
+        roadmap_generator,
+    )
+
+    workflow.set_entry_point(
+        "resume_analyzer"
+    )
+
+    workflow.add_edge(
+        "resume_analyzer",
+        "skill_gap_analyzer",
+    )
+
+    workflow.add_edge(
+        "skill_gap_analyzer",
+        "career_advisor",
+    )
+
+    workflow.add_edge(
+        "career_advisor",
+        "roadmap_generator",
+    )
+
+    workflow.add_edge(
+        "roadmap_generator",
+        END,
+    )
+
+    return workflow.compile()

@@ -1,9 +1,27 @@
-def analyze_skill_gap(state):
+"""
+Skill Gap Analyzer Agent
 
-    return {
-        "missing_skills": [
-            "Docker",
-            "AWS",
-            "Kubernetes"
-        ]
-    }
+Analyzes the resume analysis and identifies
+missing technical skills, certifications,
+and learning opportunities.
+"""
+
+from ai.gemini_service import ask_gemini
+from ai.prompts import SKILL_GAP_PROMPT
+
+
+def skill_gap_analyzer(state):
+
+    prompt = f"""
+    {SKILL_GAP_PROMPT}
+
+    Resume Analysis:
+
+    {state["resume_analysis"]}
+    """
+
+    response = ask_gemini(prompt)
+
+    state["skill_gaps"] = response
+
+    return state
